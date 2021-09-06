@@ -1,0 +1,19 @@
+debug: false
+
+custom-matcher:
+  token: ひみつ
+
+guild:
+  guild-id: 706944120475746415
+  text-channel-id: 884090553736790096
+  voice-channel-id:
+    custom: 709713152136183848
+    blue-team: 709713152136183848
+    red-team: 706948550679986248
+
+mysql:
+  user: ひみつ
+  passwd: ひみつ
+  host: ひみつ
+  db: ひみつ
+  db_dev: ひみつ
