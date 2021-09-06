@@ -83,7 +83,7 @@ def update_db(winner: int):
 async def finish_game(client: Client, winner: int):
     messages = list()
     messages.append("試合終了!")
-    messages.append("ブルー" if winner else "レッド" + "チームの勝ち！")
+    messages.append("レッド" if winner else "ブルー" + "チームの勝ち！")
     messages.append(await update_rating(client, winner))
     update_db(winner)
     messages.append("レーティングの更新が完了しました。")
