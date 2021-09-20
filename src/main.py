@@ -39,18 +39,19 @@ async def on_message(message: discord.Message):
 async def on_reaction_add(reaction: discord.Reaction, user: discord.User):
     print("reaction:", reaction)
     print("type:", type(reaction))
+    owner_id = config['guild']['owner-id']
     # ゲーム作成時の処理
     if reaction.message.author.bot and reaction.message.content.startswith('NEW GAME'):
-        if (not user.bot) and reaction.emoji == '▶':
+        if user.id == owner_id and reaction.emoji == '▶':
             game_message = await reaction.message.channel.send(await match.start_game(client))
             await reaction.message.delete()
             for reaction in ['🟦', '🟥']:
                 await game_message.add_reaction(reaction)
-        elif (not user.bot) and reaction.emoji == '⏹':
+        elif user.id == owner_id and reaction.emoji == '⏹':
             match.status = match.MatchStatus.NOTHING
             await reaction.message.delete()
             await reaction.message.channel.send("中止しました。")
-        elif (not user.bot) and reaction.emoji == '🔁':
+        elif user.id == owner_id and reaction.emoji == '🔁':
             await reaction.message.delete()
             game_message = await reaction.message.channel.send(await match.refresh_match(client))
             for reaction in ['▶', '⏹', '🔁']:
@@ -59,9 +60,9 @@ async def on_reaction_add(reaction: discord.Reaction, user: discord.User):
             return
     # ゲーム終了時の処理
     elif reaction.message.author.bot and reaction.message.content.startswith('NOW PLAYING'):
-        if (not user.bot) and reaction.emoji == '🟦':
+        if user.id == owner_id and reaction.emoji == '🟦':
             game_message = await match.finish_game(client, 0)
-        elif (not user.bot) and reaction.emoji == '🟥':
+        elif user.id == owner_id and reaction.emoji == '🟥':
             game_message = await match.finish_game(client, 1)
         else:
             return
