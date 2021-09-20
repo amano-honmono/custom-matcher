@@ -1,11 +1,11 @@
 import discord
 import yaml
 
-from src import match
+from src import match, stats
+from src.config import config
 
 client = discord.Client()
-with open('/opt/project/config.yml') as file:
-    config = yaml.safe_load(file)
+
 
 
 @client.event
@@ -33,6 +33,9 @@ async def on_message(message: discord.Message):
     if command[0] == "reset":
         match.status = match.MatchStatus.NOTHING
         await message.channel.send("OK")
+
+    if command[0] == "ranking":
+        await message.channel.send(await stats.get_ranking(client))
 
 
 @client.event

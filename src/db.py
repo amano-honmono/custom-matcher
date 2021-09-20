@@ -1,5 +1,5 @@
 import MySQLdb
-from main import config
+from src.config import config
 
 
 class DB:
@@ -14,7 +14,7 @@ class DB:
                 config['mysql']['db']
         )
 
-    def query(self, sql, values):
+    def query(self, sql, values = ()):
         try:
             cursor = self.connection.cursor()
             cursor.execute(sql, values)

@@ -6,7 +6,7 @@ import itertools
 
 from discord import Client
 
-from main import config
+from src.config import config
 from src.db import DB
 from src.game import Game
 from src.player import Player
@@ -105,7 +105,7 @@ def generate_match(client: Client):
     print(config['guild']['voice-channel-id']['custom'])
     members = client.get_channel(config['guild']['voice-channel-id']['custom']).voice_states.keys()
     ############################################ debug ###############################################
-    # members = [735519093045854371, 267469367195860992, 211265291097735168, 219488189860151296]
+    members = [735519093045854371, 267469367195860992, 211265291097735168, 219488189860151296]
     ##################################################################################################
     print('members id:', members)
     players = get_players(members)
