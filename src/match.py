@@ -2,12 +2,12 @@ import random
 from enum import Enum
 from statistics import mean
 
-import MySQLdb
 import itertools
 
 from discord import Client
 
 from main import config
+from src.db import DB
 from src.game import Game
 from src.player import Player
 
@@ -18,14 +18,7 @@ class MatchStatus(Enum):
     PLAYING = 3
 
 
-connection = MySQLdb.connect(
-    user=config['mysql']['user'],
-    passwd=config['mysql']['passwd'],
-    host=config['mysql']['host'],
-    db=config['mysql']['db_dev'] if config['debug'] else config['mysql']['db'],
-)
-cursor = connection.cursor()
-
+db = DB()
 match_list = []
 match_iter = 0
 status = MatchStatus.NOTHING
@@ -39,7 +32,7 @@ async def start_game(client: Client):
 
 
 async def update_rating(client: Client, winner: int):
-    k = 32
+    k = 64
     win_team = match_list[match_iter][winner]
     lose_team = match_list[match_iter][1 - winner]
     win_team_rating_mean = mean([player.rating for player in win_team])
@@ -64,7 +57,7 @@ def update_db(winner: int):
     # gameテーブルを更新
     query = 'INSERT INTO game (winner) VALUES (%s)'
     print('execute SQL:', query)
-    cursor.execute(query, (winner,))
+    cursor = db.query(query, (winner,))
     game_id = cursor.lastrowid
 
     # playerテーブル, userテーブルを更新
@@ -77,7 +70,7 @@ def update_db(winner: int):
         print('execute SQL:', query)
         cursor.executemany(query, [(player.rating, player.discord_id) for player in match_list[match_iter][team]])
 
-    connection.commit()
+    db.connection.commit()
 
 
 async def finish_game(client: Client, winner: int):
@@ -147,7 +140,7 @@ def get_players(members: list[int]):
     format_strings = ','.join(['%s'] * len(members))
     query = 'SELECT * FROM user WHERE discord_id IN (%s)' % format_strings
     print('execute SQL:', query)
-    cursor.execute(query, tuple(members))
+    cursor = db.query(query, tuple(members))
     sql_response = cursor.fetchall()
     print('===========================================')
     for row in sql_response:
@@ -163,7 +156,7 @@ def get_players(members: list[int]):
         query = 'INSERT INTO user (discord_id) VALUES (%s)'
         print('execute SQL:', query)
         cursor.executemany(query, [(i,) for i in new_user])
-        connection.commit()
+        db.connection.commit()
     return players
 
 

@@ -1,5 +1,3 @@
-import random
-
 from discord import Client
 
 from src.player import Player
